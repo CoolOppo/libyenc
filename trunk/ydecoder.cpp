@@ -332,31 +332,3 @@ bool YDecoder::write( const char *path )
         return false;
     }
 }
-
-void dump( string message )
-{
-    cout << message <<endl;
-}
-
-int main( int argc, char *argv[] )
-{
-    if( argc < 2 )
-        return EXIT_FAILURE;
-
-    YDecoder decoder;
-    decoder.message.connect( sigc::ptr_fun( dump ) );
-    decoder.warning.connect( sigc::ptr_fun( dump ) );
-    decoder.error.connect( sigc::ptr_fun( dump ) );
-//     decoder.debug.connect( sigc::ptr_fun( dump ) );
-
-    for( int i = 1; i < argc; i++ ){
-        decoder.decode( argv[i] );
-    }
-
-    if( !decoder.write( get_current_dir_name() ) ){
-        dump( "Writing failed!" );
-        return EXIT_FAILURE;
-    }
-
-    return EXIT_SUCCESS;
-}
