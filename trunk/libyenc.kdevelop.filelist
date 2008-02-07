@@ -1,5 +1,5 @@
 CMakeLists.txt
 cmake/Findlibsigc.cmake
-decoder.cpp
+ydec.cpp
 ydecoder.cpp
 ydecoder.h
