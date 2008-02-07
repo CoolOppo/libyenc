@@ -1,14 +1,14 @@
 <?xml version = '1.0'?>
 <kdevelop>
   <general>
-  <projectmanagement>KDevCustomProject</projectmanagement>
-  <projectdirectory>/home/lawrence/Projects/ydecoder/trunk</projectdirectory>
-  <absoluteprojectpath>true</absoluteprojectpath>
   <author></author>
   <email></email>
   <version>$VERSION$</version>
+  <projectmanagement>KDevCustomProject</projectmanagement>
   <primarylanguage>C++</primarylanguage>
   <ignoreparts/>
+  <projectdirectory>/home/lawrence/Projects/ydecoder/trunk</projectdirectory>
+  <absoluteprojectpath>true</absoluteprojectpath>
   <secondaryLanguages>
      <language>C</language>
   </secondaryLanguages>
@@ -16,7 +16,7 @@
   <kdevcustomproject>
     <filelistdirectory>/home/lawrence/Projects/ydecoder/trunk</filelistdirectory>
     <run>
-      <mainprogram></mainprogram>
+      <mainprogram>/home/lawrence/Projects/ydecoder/trunk/ydec</mainprogram>
       <directoryradio>custom</directoryradio>
       <customdirectory>/home/lawrence/Projects/ydecoder/trunk</customdirectory>
       <programargs></programargs>
