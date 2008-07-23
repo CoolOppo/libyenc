@@ -24,7 +24,7 @@ using namespace ydecoder;
 
 void dump( string message )
 {
-    cout << message <<endl;
+    cout << message << endl;
 }
 
 int main( int argc, char *argv[] )
@@ -36,7 +36,7 @@ int main( int argc, char *argv[] )
     decoder.message.connect( sigc::ptr_fun( dump ) );
     decoder.warning.connect( sigc::ptr_fun( dump ) );
     decoder.error.connect( sigc::ptr_fun( dump ) );
-//     decoder.debug.connect( sigc::ptr_fun( dump ) );
+    decoder.debug.connect( sigc::ptr_fun( dump ) );
 
     for( int i = 1; i < argc; i++ ){
         decoder.decode( argv[i] );
