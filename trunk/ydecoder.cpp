@@ -17,13 +17,6 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-/**
- * \author Lawrence Lee <valheru@facticius.net>
- */
-
-/**
- * \file ydecoder.cpp
- */
 
 #include <boost/format.hpp>
 #include <boost/filesystem.hpp>
@@ -59,7 +52,7 @@ void YDecoder::reinitialize()
     total_parts = 0;
 }
 
-YDecoder::Status YDecoder::decode( const char *input )
+YDecoder::Status YDecoder::decode( const char *input, bool forcedecoding )
 {
     filesystem::ifstream in( input );
 
@@ -312,6 +305,7 @@ bool YDecoder::write( const char *path )
 
         }
 
+        //Append the current filename to the path
         p /= name;
         filesystem::ofstream out( p );
 

@@ -17,14 +17,10 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-/**
- * \author Lawrence Lee <valheru@facticius.net>
- */
 
 /**
  * \file ydecoder.h
  */
-
 #ifndef YDECODER_H
 #define YDECODER_H
 
@@ -39,6 +35,7 @@ using namespace boost;
 using namespace boost::filesystem;
 using namespace sigc;
 using namespace std;
+
 /**
  * The namespace for the ydecoder class.
  */
@@ -47,6 +44,7 @@ namespace ydecoder{
     /**
      * \brief The YDecoder class provides decoding of yencoded files
      *
+     * \author Lawrence Lee <valheru@facticius.net>
      * \sa YEncoder
      */
     class YDecoder : public trackable
@@ -73,14 +71,7 @@ namespace ydecoder{
                 FAILED /**< The decoding failed */
             };
 
-            /**
-             * Constructor
-             */
             YDecoder();
-
-            /**
-             * Destructor
-             */
             ~YDecoder();
 
             /**
@@ -95,7 +86,7 @@ namespace ydecoder{
              * @param input The yencoded file to decode.
              * @return The status of the decoder after the decoding operation is finished. This is a value specified in YDecoder::Status
              */
-            Status decode( const char *input );
+            Status decode( const char *input, bool forcedecoding = false );
 
             /**
              * Write the decoded data to a file. This function should only be called once all the neccessary files have been decoded.
