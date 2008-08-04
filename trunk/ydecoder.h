@@ -79,15 +79,24 @@ namespace ydecoder{
             /**
              * Decode a yencoded file. This function will keep track of the decoded data so that you can decode a multipart file by
              * simply calling this function repeatedly for the different parts.
-             * @param input The yencoded file to decode.
-             * @return The status of the decoder after the decoding operation is finished. This is a value specified in YDecoder::Status
+             *
+             * @param input
+             *      The yencoded file to decode.
+             *
+             * @param forcedecoding
+             *      Force the decoding of corrupt multiparts.
+             *
+             * @return
+             *      The status of the decoder after the decoding operation is finished. This is a value specified in YDecoder::Status
              */
             Status decode( const char *input, bool forcedecoding = false );
 
             /**
              * Write the decoded data to a file. This function should only be called once all the neccessary files have been decoded.
+             *
              * @param path The path to save the data to. The filename obtained by the decoder from the yencoded file(s) will be appended
              * to this.
+             *
              * @return \b true if the write succeeded, \b false if it failed.
              */
             bool write( const char *path );
