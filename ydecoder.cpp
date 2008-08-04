@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Lawrence Lee   *
- *   valheru@facticius.net   *
+ *   Copyright (C) 2007 by Lawrence Lee                                    *
+ *   valheru.ashen.shugar@gmail.com                                        *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -116,11 +116,15 @@ YDecoder::Status YDecoder::decode( const char *input, bool forcedecoding )
  * Function for obtaining values of parameters from the header and trailer of a yenc encoded file.
  * The return value is only valid immediately after this call returns, so do not under any
  * circumstances assign pointers to this value. Rather, copy the value into a variable of your choice.
+ *
  * @param attr The name of the parameter that you wish to obtain a value for.
- * @return The associated value of the parameter \a attr. NULL is returned is the parameter was not found.
- * \warning This function should not be used to retrieve the name parameter. Use the function YDecoder::getName()
+ *
+ * @return The associated value of the parameter @p attr. NULL is returned is the parameter was not found.
+ *
+ * @warning This function should not be used to retrieve the name parameter. Use the function YDecoder::getName()
  * for that.
- * \sa getName()
+ *
+ * @sa getName()
  */
 const char* YDecoder::getAttribute( const char *attr )
 {
@@ -144,8 +148,10 @@ const char* YDecoder::getAttribute( const char *attr )
 /**
  * Retrieve the filename the decoded data should be written to. If this function returns NULL, then
  * the decoder should abort.
+ *
  * @return The filename that the decoded data should be written to. Returns NULL if nothing was found.
- * \sa getAttribute()
+ *
+ * @sa getAttribute()
  */
 char* YDecoder::getName()
 {
@@ -185,9 +191,12 @@ char* YDecoder::getName()
  * followed by a whitespace has been read, as per the yenc specifications. All header variables are set
  * after this function has been called. The filestream passed to the function is garuanteed to point to the
  * beginning of the yencoded data after this function has been called.
+ *
  * @param in The filestream that the function should read from.
- * @return \b true if the header variables line, size and name were set, otherwise \b false
- * \sa parseHeader()
+ *
+ * @return @b true if the header variables line, size and name were set, otherwise @b false
+ *
+ * @sa parseHeader()
  */
 YDecoder::Status YDecoder::parseHeader( filesystem::ifstream *in )
 {
