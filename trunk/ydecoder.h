@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Lawrence Lee   *
- *   valheru@facticius.net   *
+ *   Copyright (C) 2007 by Lawrence Lee                                    *
+ *   valheru.ashen.shugar@gmail.com                                        *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -19,7 +19,8 @@
  ***************************************************************************/
 
 /**
- * \file ydecoder.h
+ * @namespace ydecoder
+ * The namespace for the ydecoder class.
  */
 #ifndef YDECODER_H
 #define YDECODER_H
@@ -36,28 +37,21 @@ using namespace boost::filesystem;
 using namespace sigc;
 using namespace std;
 
-/**
- * The namespace for the ydecoder class.
- */
 namespace ydecoder{
 
     /**
-     * \brief The YDecoder class provides decoding of yencoded files
+     * @class YDecoder ydecoder.h
      *
-     * \author Lawrence Lee <valheru@facticius.net>
-     * \sa YEncoder
+     * @brief The YDecoder class provides decoding of yencoded files
+     *
+     * @author Lawrence Lee <valheru.ashen.shugar@gmail.com>
+     *
+     * @see YEncoder
      */
     class YDecoder : public trackable
     {
         public:
-            //Variables
-            signal<void, string> progress;
-            signal<void, string> message;
-            signal<void, string> warning;
-            signal<void, string> error;
-            signal<void, string> debug;
-
-            //Functions
+            //Enums
             /**
              * Enum providing return codes for the decoder.
              */
@@ -70,6 +64,8 @@ namespace ydecoder{
                 NAME_MISMATCH, /**< The name value in the header doesn't match the name of the previous parts */
                 FAILED /**< The decoding failed */
             };
+
+            //Functions
 
             YDecoder();
             ~YDecoder();
@@ -95,6 +91,32 @@ namespace ydecoder{
              * @return \b true if the write succeeded, \b false if it failed.
              */
             bool write( const char *path );
+
+            //Signals
+            /**
+             * Signal you can connect to to track the progress of the decoder
+             */
+            signal<void, string> progress;
+
+            /**
+             * Signal you can connect to to recieve messages from the decoder
+             */
+            signal<void, string> message;
+
+            /**
+             * Signal you can connect to to recieve warnings from the decoder
+             */
+            signal<void, string> warning;
+
+            /**
+             * Signal you can connect to to recieve errors from the decoder
+             */
+            signal<void, string> error;
+
+            /**
+             * Signal you can connect to to recieve debug information from the decoder
+             */
+            signal<void, string> debug;
 
         private:
             //Variables
