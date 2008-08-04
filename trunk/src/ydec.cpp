@@ -23,7 +23,7 @@
 
 using namespace ydecoder;
 
-void dump( string message )
+void print( string message )
 {
     cout << message << endl;
 }
@@ -34,17 +34,17 @@ int main( int argc, char *argv[] )
         return EXIT_FAILURE;
 
     YDecoder decoder;
-    decoder.message.connect( sigc::ptr_fun( dump ) );
-    decoder.warning.connect( sigc::ptr_fun( dump ) );
-    decoder.error.connect( sigc::ptr_fun( dump ) );
-    decoder.debug.connect( sigc::ptr_fun( dump ) );
+    decoder.message.connect( sigc::ptr_fun( print ) );
+    decoder.warning.connect( sigc::ptr_fun( print ) );
+    decoder.error.connect( sigc::ptr_fun( print ) );
+    decoder.debug.connect( sigc::ptr_fun( print ) );
 
     for( int i = 1; i < argc; i++ ){
         decoder.decode( argv[i] );
 }
 
     if( !decoder.write( get_current_dir_name() ) ){
-        dump( "Writing failed!" );
+        print( "Writing failed!" );
         return EXIT_FAILURE;
 }
 
