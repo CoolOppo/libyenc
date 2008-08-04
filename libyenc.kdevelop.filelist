@@ -1,6 +1,0 @@
-# KDevelop Custom Project File List
-CMakeLists.txt
-cmake/Findlibsigc.cmake
-ydec.cpp
-ydecoder.cpp
-ydecoder.h
