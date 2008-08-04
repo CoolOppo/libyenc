@@ -30,7 +30,6 @@
 #include <sigc++/sigc++.h>
 #include <string>
 #include <sstream>
-#include <iostream>
 
 using namespace boost;
 using namespace boost::filesystem;
@@ -50,12 +49,14 @@ namespace ydecoder{
      *
      * In the simplest case, you can initialize an instance of the class
      * and then sequentially call the decode() function on the multipart files
-     * you wish to decode. All you have to do inbetween decoding different
-     * files is call the reinitialize() function. A standard use of the decoder
-     * would look like this, assuming your wanted to connect to all signals:
+     * you wish to decode, and then call write() once the files have been processed
+     * to write the decoded files to disk. If you want to decode different files
+     * that each consist of one or more multipart files, then you must call the
+     * reinitialize() function inbetween files. A standard use of the decoder would
+     * look like this, assuming your wanted to connect to all signals:
      *
      * @code
-     * #include <sigc++/sigc++.h>
+     * #include <iostream>
      * #include "ydecoder.h"
      *
      * using namespace ydecoder;
@@ -89,6 +90,9 @@ namespace ydecoder{
      * }
      * @endcode
      *
+     * Since the class inherits from sigc++::trackable, any signals that you connect
+     * to this class will automaticall be disconnected when the class is deleted.
+     *
      * @author Lawrence Lee <valheru.ashen.shugar@gmail.com>
      *
      * @see YEncoder
@@ -113,8 +117,8 @@ namespace ydecoder{
             /**
              */
             enum Decoding{
-                Strict = 0, /**< Strict decoding. This will enforce decoding in a manner compliant with the 1.2 specifications */
-                Force /**< This will force the decoder to decode the files as best it can, even though it may not comply with the 1.2 specifications */
+                STRICT = 0, /**< Strict decoding. This will enforce decoding in a manner compliant with the 1.2 specifications */
+                FORCE /**< This will force the decoder to decode the files as best it can, even though it may not comply with the 1.2 specifications */
             };
 
             //Functions
@@ -140,7 +144,7 @@ namespace ydecoder{
              * @return
              *      The status of the decoder after the decoding operation is finished. This is a value specified in YDecoder::Status
              */
-            Status decode( const char *input, Decoding = Strict );
+            Status decode( const char *input, Decoding forcedecoding = STRICT );
 
             /**
              * Write the decoded data to a file. This function should only be called once all the neccessary files have been decoded.

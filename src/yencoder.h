@@ -19,7 +19,7 @@
  ***************************************************************************/
 
 /**
- * @namespace YEncoder yencoder
+ * @namespace yencoder yencoder
  */
 #ifndef YENCODER_YENCODER_H
 #define YENCODER_YENCODER_H
