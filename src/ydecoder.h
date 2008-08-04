@@ -138,13 +138,16 @@ namespace ydecoder{
              * @param input
              *      The yencoded file to decode.
              *
-             * @param forcedecoding
-             *      Force the decoding of corrupt multiparts.
+             * @param decoding
+             *      If set to STRICT then the decoder will decode multiparts compliant with the 1.2 version of the yenc specifications;
+             *      ie. if it encounters any CRC mismatches or missing parts it will abort.
+             *      If this is set to FORCE then the decoder will ignore any CRC mismatch errors it encounters, as well as writing 0's
+             *      for the duration of any missing files.
              *
              * @return
              *      The status of the decoder after the decoding operation is finished. This is a value specified in YDecoder::Status
              */
-            Status decode( const char *input, Decoding forcedecoding = STRICT );
+            Status decode( const char *input, Decoding decoding = STRICT );
 
             /**
              * Write the decoded data to a file. This function should only be called once all the neccessary files have been decoded.
