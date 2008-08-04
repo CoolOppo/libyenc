@@ -53,7 +53,7 @@ namespace ydecoder{
         total_parts = 0;
     }
 
-    YDecoder::Status YDecoder::decode( const char *input, YDecoder::Decoding )
+    YDecoder::Status YDecoder::decode( const char *input, YDecoder::Decoding decoding )
     {
         filesystem::ifstream in( input );
 
