@@ -22,8 +22,8 @@
  * @namespace ydecoder
  * The namespace for the ydecoder class.
  */
-#ifndef YDECODER_H
-#define YDECODER_H
+#ifndef YDECODER_YDECODER_H
+#define YDECODER_YDECODER_H
 
 #include <boost/crc.hpp>
 #include <boost/filesystem/fstream.hpp>
@@ -43,6 +43,51 @@ namespace ydecoder{
      * @class YDecoder ydecoder.h
      *
      * @brief The YDecoder class provides decoding of yencoded files
+     *
+     * This class provides a yenc 1.2 compliant decoder. It uses libsigc++
+     * in order to provide an easy to use interface to which you can connect
+     * in order to recieve various message from the library.
+     *
+     * In the simplest case, you can initialize an instance of the class
+     * and then sequentially call the decode() function on the multipart files
+     * you wish to decode. All you have to do inbetween decoding different
+     * files is call the reinitialize() function. A standard use of the decoder
+     * would look like this, assuming your wanted to connect to all signals:
+     *
+     * @code
+     * #include <sigc++/sigc++.h>
+     * #include "ydecoder.h"
+     *
+     * using namespace ydecoder;
+     *
+     * void dump( string message )
+     * {
+     *     cout << message << endl;
+     * }
+     *
+     * int main( int argc, char *argv[] )
+     * {
+     *     if( argc < 2 )
+     *         return EXIT_FAILURE;
+     *
+     *     YDecoder decoder;
+     *     decoder.message.connect( sigc::ptr_fun( dump ) );
+     *     decoder.warning.connect( sigc::ptr_fun( dump ) );
+     *     decoder.error.connect( sigc::ptr_fun( dump ) );
+     *     decoder.debug.connect( sigc::ptr_fun( dump ) );
+     *
+     *     for( int i = 1; i < argc; i++ ){
+     *         decoder.decode( argv[i] );
+     *     }
+     *
+     *     if( !decoder.write( get_current_dir_name() ) ){
+     *         dump( "Writing failed!" );
+     *         return EXIT_FAILURE;
+     *     }
+     *
+     *     return EXIT_SUCCESS;
+     * }
+     * @endcode
      *
      * @author Lawrence Lee <valheru.ashen.shugar@gmail.com>
      *
@@ -65,8 +110,14 @@ namespace ydecoder{
                 FAILED /**< The decoding failed */
             };
 
-            //Functions
+            /**
+             */
+            enum Decoding{
+                Strict = 0, /**< Strict decoding. This will enforce decoding in a manner compliant with the 1.2 specifications */
+                Force /**< This will force the decoder to decode the files as best it can, even though it may not comply with the 1.2 specifications */
+            };
 
+            //Functions
             YDecoder();
             ~YDecoder();
 
@@ -89,7 +140,7 @@ namespace ydecoder{
              * @return
              *      The status of the decoder after the decoding operation is finished. This is a value specified in YDecoder::Status
              */
-            Status decode( const char *input, bool forcedecoding = false );
+            Status decode( const char *input, Decoding = Strict );
 
             /**
              * Write the decoded data to a file. This function should only be called once all the neccessary files have been decoded.
