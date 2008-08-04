@@ -239,7 +239,6 @@ namespace ydecoder{
 
     }
 
-
     /**
     * Parse the trailer of the yencoded file. Call this function when the line beginning with \c =yend has been read.
     * This function should only be called \em after all the data has been read and the final CRC value has been
