@@ -1,0 +1,11 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: Libyec
+Description: yenc encoder/decoder library
+Version: 0.1
+Requires: sigc++-2.0
+Libs: -L${libdir} -lyenc
+Cflags: -I${includedir}
