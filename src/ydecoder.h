@@ -30,6 +30,7 @@
 #include <sigc++/sigc++.h>
 #include <string>
 #include <sstream>
+#include "bitwise_enums.hpp"
 
 using namespace boost;
 using namespace boost::filesystem;
@@ -37,6 +38,31 @@ using namespace sigc;
 using namespace std;
 
 namespace ydecoder{
+    //Enums
+    /**
+     * Return codes for the decoder.
+     */
+    enum Status{
+        SUCCESS = 0, /**< The decoding succeeded */
+        CRC_MISMATCH = 1, /**< The crc value of the decoded data doesn't match the crc value in the trailer */
+        PART_CRC_MISMATCH = 2, /**< The crc value of the decoded part data doesn't match the part crc value in the trailer */
+        PART_MISMATCH = 4, /**< The part number in the trailer doesn't match the part number in the header */
+        SIZE_MISMATCH = 8, /**< The size of the data or the size value in the trailer doesn't match the size value in the header */
+        NAME_MISMATCH = 16, /**< The name value in the header doesn't match the name of the previous parts */
+        FAILED =  32/**< The decoding failed */
+    };
+
+    typedef bitwise_enum<Status> DecoderStatus;
+
+    /**
+     * Decoding options for the decoder.
+     */
+    enum Option{
+        STRICT = 0, /**< Strict decoding. This will enforce decoding in a manner compliant with the 1.2 specifications */
+        FORCE /**< This will force the decoder to decode the files as best it can, even though it may not comply with the 1.2 specifications */
+    };
+
+    typedef bitwise_enum<Option> DecodingOption;
 
     /**
      * @class YDecoder ydecoder.h
@@ -52,7 +78,7 @@ namespace ydecoder{
      * you wish to decode, and then call write() once the files have been processed
      * to write the decoded files to disk. If you want to decode different files
      * that each consist of one or more multipart files, then you must call the
-     * reinitialize() function inbetween files. A standard use of the decoder would
+     * initialize() function inbetween files. A standard use of the decoder would
      * look like this, assuming your wanted to connect to all signals:
      *
      * @code
@@ -100,36 +126,15 @@ namespace ydecoder{
     class YDecoder : public trackable
     {
         public:
-            //Enums
-            /**
-             * Enum providing return codes for the decoder.
-             */
-            enum Status{
-                SUCCESS = 0, /**< The decoding succeeded */
-                CRC_MISMATCH, /**< The crc value of the decoded data doesn't match the crc value in the trailer */
-                PART_CRC_MISMATCH, /**< The crc value of the decoded part data doesn't match the part crc value in the trailer */
-                PART_MISMATCH, /**< The part number in the trailer doesn't match the part number in the header */
-                SIZE_MISMATCH, /**< The size of the data or the size value in the trailer doesn't match the size value in the header */
-                NAME_MISMATCH, /**< The name value in the header doesn't match the name of the previous parts */
-                FAILED /**< The decoding failed */
-            };
-
-            /**
-             */
-            enum Decoding{
-                STRICT = 0, /**< Strict decoding. This will enforce decoding in a manner compliant with the 1.2 specifications */
-                FORCE /**< This will force the decoder to decode the files as best it can, even though it may not comply with the 1.2 specifications */
-            };
-
             //Functions
             YDecoder();
             ~YDecoder();
 
             /**
-             * Resets the values of the header and trailer variables. Call this function before decoding a file with a different filename
+             * Initializes the values of the header and trailer variables. Call this function before decoding a file with a different filename
              * than the previous file. Do not call this function in between decoding parts of a multipart file.
              */
-            void reinitialize();
+            void initialize();
 
             /**
              * Decode a yencoded file. This function will keep track of the decoded data so that you can decode a multipart file by
@@ -145,9 +150,9 @@ namespace ydecoder{
              *      for the duration of any missing files.
              *
              * @return
-             *      The status of the decoder after the decoding operation is finished. This is a value specified in YDecoder::Status
+             *      The status of the decoder after the decoding operation is finished. This is a value specified in ydecoder::Status
              */
-            Status decode( const char *input, Decoding decoding = STRICT );
+            DecoderStatus decode( const char *input, DecodingOption decoding = STRICT );
 
             /**
              * Write the decoded data to a file. This function should only be called once all the neccessary files have been decoded.
@@ -201,8 +206,8 @@ namespace ydecoder{
             //Functions
             const char* getAttribute( const char *attr );
             char* getName();
-            Status parseHeader( filesystem::ifstream *in );
-            Status parseTrailer( const stringstream &write_stream );
+            DecoderStatus parseHeader( filesystem::ifstream *in, DecodingOption decoding = STRICT );
+            DecoderStatus parseTrailer( const stringstream &write_stream, DecodingOption decoding = STRICT );
     };
 }
 
