@@ -53,27 +53,27 @@ void YDecoder::initialize()
     total_parts = 0;
 }
 
-DecoderStatus YDecoder::decode( const char *input, DecodingOption decoding )
+DecoderStatus::Status YDecoder::decode( const char *input, const DecodingOption::Option &decoding )
 {
     filesystem::ifstream in( input );
 
     if( !in.is_open() ){
         error.emit( str( format( "Failed to open file %1%" ) % input ) );
-        return FAILED;
+        return DecoderStatus::FAILED;
     }
 
     stringstream write_buffer;
-    DecoderStatus status = SUCCESS;
+    DecoderStatus::Status status = DecoderStatus::SUCCESS;
 
     while( getline( in, read_buffer ) ){
 
         if( read_buffer.substr( 0, 8 ) != "=ybegin " )
             continue;
 
-        if( ( status = parseHeader( &in ) ) != SUCCESS ){
+        if( ( status = parseHeader( &in ) ) != DecoderStatus::SUCCESS ){
             error.emit( "Failed to parse header!" );
 
-            if( decoding == STRICT )
+            if( decoding == DecodingOption::STRICT )
             break;
         }
 
@@ -200,7 +200,7 @@ char* YDecoder::getName()
 *
 * @sa parseHeader()
 */
-DecoderStatus YDecoder::parseHeader( filesystem::ifstream *in, DecodingOption decoding )
+DecoderStatus::Status YDecoder::parseHeader( filesystem::ifstream *in, const DecodingOption::Option &decoding )
 {
     //Read the yEnc header
     part = atoi( getAttribute( "part" ) );
@@ -216,7 +216,7 @@ DecoderStatus YDecoder::parseHeader( filesystem::ifstream *in, DecodingOption de
 
         if( strcmp( name, getName() ) != 0 ){
             warning.emit( "Name mismatch!" );
-            return NAME_MISMATCH;
+            return DecoderStatus::NAME_MISMATCH;
         }
     }
 
@@ -233,10 +233,10 @@ DecoderStatus YDecoder::parseHeader( filesystem::ifstream *in, DecodingOption de
 
     if( !( line && size && name ) ){
         error.emit( "Unable to find all required header variables!" );
-        return FAILED;
+        return DecoderStatus::FAILED;
     }
 
-    return SUCCESS;
+    return DecoderStatus::SUCCESS;
 
 }
 
@@ -246,27 +246,27 @@ DecoderStatus YDecoder::parseHeader( filesystem::ifstream *in, DecodingOption de
 * calculated for the decoded data.
 * @return The status of the decoder.
 */
-DecoderStatus YDecoder::parseTrailer( const stringstream &write_stream, DecodingOption decoding )
+DecoderStatus::Status YDecoder::parseTrailer( const stringstream &write_stream, const DecodingOption::Option &decoding )
 {
-    DecoderStatus status;
+    DecoderStatus::Status status;
     if( part ){
 
         if( part != atoi( getAttribute( "part" ) ) )
-            status |= PART_MISMATCH;
+            status |= DecoderStatus::PART_MISMATCH;
 
-        if( decoding == STRICT )
+        if( decoding == DecodingOption::STRICT )
             return status;
 
         if( part_size != atoi( getAttribute( "size" ) ) )
-            status |= SIZE_MISMATCH;
+            status |= DecoderStatus::SIZE_MISMATCH;
 
-        if( decoding == STRICT )
+        if( decoding == DecodingOption::STRICT )
             return status;
 
         if( part_size != write_stream.str().length() )
-            status |= SIZE_MISMATCH;
+            status |= DecoderStatus::SIZE_MISMATCH;
 
-        if( decoding == STRICT )
+        if( decoding == DecodingOption::STRICT )
             return status;
 
         pcrc = strtoul( getAttribute( " pcrc32" ), NULL, 16 );
@@ -275,18 +275,18 @@ DecoderStatus YDecoder::parseTrailer( const stringstream &write_stream, Decoding
         if( pcrc != pcrc_val.checksum() ){
             debug.emit( str( format( "pcrc_val : %1$x" ) % pcrc_val.checksum() ) );
             warning.emit( "pcrc mismatch!" );
-            status |= PART_CRC_MISMATCH;
+            status |= DecoderStatus::PART_CRC_MISMATCH;
 
-            if( decoding == STRICT )
+            if( decoding == DecodingOption::STRICT )
                 return status;
         }
 
     }else{
 
         if( size != atoi( getAttribute( "size" ) ) )
-            status |= SIZE_MISMATCH;
+            status |= DecoderStatus::SIZE_MISMATCH;
 
-        if( decoding == STRICT )
+        if( decoding == DecodingOption::STRICT )
             return status;
 
     }
@@ -297,9 +297,9 @@ DecoderStatus YDecoder::parseTrailer( const stringstream &write_stream, Decoding
     if( crc && crc != crc_val.checksum() ){
         debug.emit( str( format( "crc_val : %1$x" ) % crc_val.checksum() ) );
         warning.emit( "crc mismatch!" );
-        status |= CRC_MISMATCH;
+        status |= DecoderStatus::CRC_MISMATCH;
 
-        if( decoding == STRICT )
+        if( decoding == DecodingOption::STRICT )
             return status;
     }
 

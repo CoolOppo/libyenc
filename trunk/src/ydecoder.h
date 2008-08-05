@@ -30,7 +30,7 @@
 #include <sigc++/sigc++.h>
 #include <string>
 #include <sstream>
-#include "bitwise_enums.hpp"
+// #include "bitwise_enums.hpp"
 
 using namespace boost;
 using namespace boost::filesystem;
@@ -40,29 +40,83 @@ using namespace std;
 namespace ydecoder{
     //Enums
     /**
-     * Return codes for the decoder.
+     * @class DecoderStatus ydecoder.h
+     *
+     * @brief Provides a type-safe enum wrapper for the decoder status.
+     *
+     * @author Lawrence Lee <valheru.ashen.shugar@gmail.com>
      */
-    enum Status{
-        SUCCESS = 0, /**< The decoding succeeded */
-        CRC_MISMATCH = 1, /**< The crc value of the decoded data doesn't match the crc value in the trailer */
-        PART_CRC_MISMATCH = 2, /**< The crc value of the decoded part data doesn't match the part crc value in the trailer */
-        PART_MISMATCH = 4, /**< The part number in the trailer doesn't match the part number in the header */
-        SIZE_MISMATCH = 8, /**< The size of the data or the size value in the trailer doesn't match the size value in the header */
-        NAME_MISMATCH = 16, /**< The name value in the header doesn't match the name of the previous parts */
-        FAILED =  32/**< The decoding failed */
+    class DecoderStatus{
+        public:
+            enum Status{
+                SUCCESS = 0, /**< The decoding succeeded */
+                CRC_MISMATCH = 1, /**< The crc value of the decoded data doesn't match the crc value in the trailer */
+                PART_CRC_MISMATCH = 2, /**< The crc value of the decoded part data doesn't match the part crc value in the trailer */
+                PART_MISMATCH = 4, /**< The part number in the trailer doesn't match the part number in the header */
+                SIZE_MISMATCH = 8, /**< The size of the data or the size value in the trailer doesn't match the size value in the header */
+                NAME_MISMATCH = 16, /**< The name value in the header doesn't match the name of the previous parts */
+                FAILED =  32/**< The decoding failed */
+            };
+
+            DecoderStatus() : status( SUCCESS ){}
+            explicit DecoderStatus( const DecoderStatus &other ){ status = other.status; }
+            explicit DecoderStatus( const Status &newstatus ){ status = newstatus; }
+            ~DecoderStatus();
+
+            //Operators
+            DecoderStatus& operator=( const DecoderStatus &other ){ if( this != &other ){ status = other.status; } return *this; }
+            DecoderStatus& operator=( const Status &newstatus ){ status = newstatus; return *this; }
+            bool operator==( const DecoderStatus &other ){ return status == other.status; }
+            bool operator==( const Status &other ){ return status == other; }
+            bool operator!=( const DecoderStatus &other ){ return !( status == other.status ); }
+            bool operator!=( const Status &other ){ return !( status == other ); }
+            DecoderStatus& operator|=( const DecoderStatus &other ){ status |= other.status; return *this; }
+            DecoderStatus& operator|=( const Status &other ){ status |= other; return *this; }
+//             DecoderStatus& operator|( const DecoderStatus &other ){ DecoderStatus ret( *this ); return ( ret |= other ); }
+//             DecoderStatus& operator|( const Status &other ){ DecoderStatus ret( *this ); ret.status |= other; return ret; }
+
+        private:
+            Status status;
     };
 
-    typedef bitwise_enum<Status> DecoderStatus;
+//     typedef bitwise_enum<Status> DecoderStatus;
 
     /**
-     * Decoding options for the decoder.
+     * @class DecodingOption ydecoder.h
+     *
+     * @brief Provides a type-safe enum wrapper for the decoding option.
+     *
+     * @author Lawrence Lee <valheru.ashen.shugar@gmail.com>
      */
-    enum Option{
-        STRICT = 0, /**< Strict decoding. This will enforce decoding in a manner compliant with the 1.2 specifications */
-        FORCE /**< This will force the decoder to decode the files as best it can, even though it may not comply with the 1.2 specifications */
+    class DecodingOption{
+        public:
+            enum Option{
+                STRICT = 0, /**< Strict decoding. This will enforce decoding in a manner compliant with the 1.2 specifications */
+                FORCE /**< This will force the decoder to decode the files as best it can, even though it may not comply with the 1.2 specifications */
+            };
+            
+            DecodingOption() : option( STRICT ){}
+            explicit DecodingOption( const DecodingOption &other ){ option = other.option; }
+            explicit DecodingOption( const Option &newoption ){ option = newoption; }
+            ~DecodingOption();
+
+            //Operators
+            DecodingOption& operator=( const DecodingOption &other ){ if( this != &other ){ option = other.option; } return *this; }
+            DecodingOption& operator=( const Option &newoption ){ option = newoption; return *this; }
+            bool operator==( const DecodingOption &other ){ return option == other.option; }
+            bool operator==( const Option &other ){ return option == other; }
+            bool operator!=( const DecodingOption &other ){ return !( option == other.option ); }
+            bool operator!=( const Option &other ){ return !( option == other ); }
+            DecodingOption& operator|=( const DecodingOption &other ){}
+            DecodingOption& operator|=( const Option &other ){}
+//             DecodingOption& operator|( const DecodingOption &other ){ DecodingOption ret( *this ); return ( ret |= other ); }
+//             DecodingOption& operator|( const Option &other ){ DecodingOption ret( *this ); ret.option |= other; return ret; }
+
+        private:
+            Option option;
     };
 
-    typedef bitwise_enum<Option> DecodingOption;
+//     typedef bitwise_enum<Option> DecodingOption;
 
     /**
      * @class YDecoder ydecoder.h
@@ -152,7 +206,7 @@ namespace ydecoder{
              * @return
              *      The status of the decoder after the decoding operation is finished. This is a value specified in ydecoder::Status
              */
-            DecoderStatus decode( const char *input, DecodingOption decoding = STRICT );
+            DecoderStatus::Status decode( const char *input, const DecodingOption::Option &decoding = DecodingOption::STRICT );
 
             /**
              * Write the decoded data to a file. This function should only be called once all the neccessary files have been decoded.
@@ -206,8 +260,8 @@ namespace ydecoder{
             //Functions
             const char* getAttribute( const char *attr );
             char* getName();
-            DecoderStatus parseHeader( filesystem::ifstream *in, DecodingOption decoding = STRICT );
-            DecoderStatus parseTrailer( const stringstream &write_stream, DecodingOption decoding = STRICT );
+            DecoderStatus::Status parseHeader( filesystem::ifstream *in, const DecodingOption::Option &decoding = DecodingOption::STRICT );
+            DecoderStatus::Status parseTrailer( const stringstream &write_stream, const DecodingOption::Option &decoding = DecodingOption::STRICT );
     };
 }
 
