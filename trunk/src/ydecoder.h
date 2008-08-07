@@ -46,8 +46,9 @@ namespace ydecoder{
      *
      * @author Lawrence Lee <valheru.ashen.shugar@gmail.com>
      */
-    class DecoderStatus{
-        public:
+//     class DecoderStatus{
+//         public:
+    namespace DecoderStatus{
             enum Status{
                 SUCCESS = 0, /**< The decoding succeeded */
                 CRC_MISMATCH = 1, /**< The crc value of the decoded data doesn't match the crc value in the trailer */
@@ -57,27 +58,28 @@ namespace ydecoder{
                 NAME_MISMATCH = 16, /**< The name value in the header doesn't match the name of the previous parts */
                 FAILED =  32/**< The decoding failed */
             };
+    }
 
-            DecoderStatus() : status( SUCCESS ){}
-            explicit DecoderStatus( const DecoderStatus &other ){ status = other.status; }
-            explicit DecoderStatus( const Status &newstatus ){ status = newstatus; }
-            ~DecoderStatus();
+//             DecoderStatus() : status( SUCCESS ){}
+//             explicit DecoderStatus( const DecoderStatus &other ){ status = other.status; }
+//             explicit DecoderStatus( const Status &newstatus ){ status = newstatus; }
+//             ~DecoderStatus();
 
             //Operators
-            DecoderStatus& operator=( const DecoderStatus &other ){ if( this != &other ){ status = other.status; } return *this; }
-            DecoderStatus& operator=( const Status &newstatus ){ status = newstatus; return *this; }
-            bool operator==( const DecoderStatus &other ){ return status == other.status; }
-            bool operator==( const Status &other ){ return status == other; }
-            bool operator!=( const DecoderStatus &other ){ return !( status == other.status ); }
-            bool operator!=( const Status &other ){ return !( status == other ); }
-            DecoderStatus& operator|=( const DecoderStatus &other ){ status |= other.status; return *this; }
-            DecoderStatus& operator|=( const Status &other ){ status |= other; return *this; }
-//             DecoderStatus& operator|( const DecoderStatus &other ){ DecoderStatus ret( *this ); return ( ret |= other ); }
-//             DecoderStatus& operator|( const Status &other ){ DecoderStatus ret( *this ); ret.status |= other; return ret; }
-
-        private:
-            Status status;
-    };
+//             inline DecoderStatus& operator=( const DecoderStatus &other ){ if( this != &other ){ status = other.status; } return *this; }
+//             inline DecoderStatus& operator=( const Status &newstatus ){ status = newstatus; return *this; }
+//             inline bool operator==( const DecoderStatus &other ){ return status == other.status; }
+//             inline bool operator==( const Status &other ){ return status == other; }
+//             inline bool operator!=( const DecoderStatus &other ){ return !( status == other.status ); }
+//             inline bool operator!=( const Status &other ){ return !( status == other ); }
+//             inline DecoderStatus& operator|=( const DecoderStatus &other ){ status = static_cast<Status>( status | other.status ); return *this; }
+//             inline DecoderStatus& operator|=( const Status &other ){ status = static_cast<Status>( status | other ); return *this; }
+//             inline DecoderStatus& operator|( const DecoderStatus &other ){ DecoderStatus ret( *this ); return ( ret |= other ); }
+//             inline DecoderStatus& operator|( const Status &other ){ DecoderStatus ret( *this ); ret.status = static_cast<Status>( ret.status | other ); return ret; }
+// 
+//         private:
+//             Status status;
+//     };
 
 //     typedef bitwise_enum<Status> DecoderStatus;
 
@@ -88,33 +90,35 @@ namespace ydecoder{
      *
      * @author Lawrence Lee <valheru.ashen.shugar@gmail.com>
      */
-    class DecodingOption{
-        public:
+//     class DecodingOption{
+//         public:
+    namespace DecodingOption{
             enum Option{
                 STRICT = 0, /**< Strict decoding. This will enforce decoding in a manner compliant with the 1.2 specifications */
                 FORCE /**< This will force the decoder to decode the files as best it can, even though it may not comply with the 1.2 specifications */
             };
-            
-            DecodingOption() : option( STRICT ){}
-            explicit DecodingOption( const DecodingOption &other ){ option = other.option; }
-            explicit DecodingOption( const Option &newoption ){ option = newoption; }
-            ~DecodingOption();
+    }
 
-            //Operators
-            DecodingOption& operator=( const DecodingOption &other ){ if( this != &other ){ option = other.option; } return *this; }
-            DecodingOption& operator=( const Option &newoption ){ option = newoption; return *this; }
-            bool operator==( const DecodingOption &other ){ return option == other.option; }
-            bool operator==( const Option &other ){ return option == other; }
-            bool operator!=( const DecodingOption &other ){ return !( option == other.option ); }
-            bool operator!=( const Option &other ){ return !( option == other ); }
-            DecodingOption& operator|=( const DecodingOption &other ){}
-            DecodingOption& operator|=( const Option &other ){}
+//             DecodingOption() : option( STRICT ){}
+//             explicit DecodingOption( const DecodingOption &other ){ option = other.option; }
+//             explicit DecodingOption( const Option &newoption ){ option = newoption; }
+//             ~DecodingOption();
+// 
+//             //Operators
+//             DecodingOption& operator=( const DecodingOption &other ){ if( this != &other ){ option = other.option; } return *this; }
+//             DecodingOption& operator=( const Option &newoption ){ option = newoption; return *this; }
+//             bool operator==( const DecodingOption &other ){ return option == other.option; }
+//             bool operator==( const Option &other ){ return option == other; }
+//             bool operator!=( const DecodingOption &other ){ return !( option == other.option ); }
+//             bool operator!=( const Option &other ){ return !( option == other ); }
+//             DecodingOption& operator|=( const DecodingOption &other ){}
+//             DecodingOption& operator|=( const Option &other ){}
 //             DecodingOption& operator|( const DecodingOption &other ){ DecodingOption ret( *this ); return ( ret |= other ); }
 //             DecodingOption& operator|( const Option &other ){ DecodingOption ret( *this ); ret.option |= other; return ret; }
 
-        private:
-            Option option;
-    };
+//         private:
+//             Option option;
+//     };
 
 //     typedef bitwise_enum<Option> DecodingOption;
 
@@ -206,7 +210,20 @@ namespace ydecoder{
              * @return
              *      The status of the decoder after the decoding operation is finished. This is a value specified in ydecoder::Status
              */
-            DecoderStatus::Status decode( const char *input, const DecodingOption::Option &decoding = DecodingOption::STRICT );
+            DecoderStatus::Status decode( const string &input, const DecodingOption::Option &decoding = DecodingOption::STRICT );
+
+            /**
+             * Helper function the does the same as the above funtion, except it accepts a list of files. This allows you to decode
+             * a list of multipart files in one call, for example. You can pass more than one file to the function, it will sort the
+             * list into distinct files and arrange them in memory.
+             *
+             * @param input
+             *
+             * @param decoding
+             *
+             * @return
+             */
+            DecoderStatus::Status decode( const vector<string>& input, const DecodingOption::Option &decoding = DecodingOption::STRICT );
 
             /**
              * Write the decoded data to a file. This function should only be called once all the neccessary files have been decoded.
