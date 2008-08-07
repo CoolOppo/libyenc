@@ -40,7 +40,7 @@ int main( int argc, char *argv[] )
     decoder.debug.connect( sigc::ptr_fun( print ) );
 
     for( int i = 1; i < argc; i++ ){
-        decoder.decode( argv[i] );
+        decoder.decode( string( argv[i] ) );
 }
 
     if( !decoder.write( get_current_dir_name() ) ){

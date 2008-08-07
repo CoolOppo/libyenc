@@ -53,7 +53,7 @@ void YDecoder::initialize()
     total_parts = 0;
 }
 
-DecoderStatus::Status YDecoder::decode( const char *input, const DecodingOption::Option &decoding )
+DecoderStatus::Status YDecoder::decode( const string &input, const DecodingOption::Option &decoding )
 {
     filesystem::ifstream in( input );
 
@@ -112,6 +112,10 @@ DecoderStatus::Status YDecoder::decode( const char *input, const DecodingOption:
     in.close();
     return status;
 
+}
+
+DecoderStatus::Status decode( const vector<string>& input, const DecodingOption::Option &decoding )
+{
 }
 
 /**
@@ -248,23 +252,23 @@ DecoderStatus::Status YDecoder::parseHeader( filesystem::ifstream *in, const Dec
 */
 DecoderStatus::Status YDecoder::parseTrailer( const stringstream &write_stream, const DecodingOption::Option &decoding )
 {
-    DecoderStatus::Status status;
+    DecoderStatus::Status status = DecoderStatus::SUCCESS;
     if( part ){
 
         if( part != atoi( getAttribute( "part" ) ) )
-            status |= DecoderStatus::PART_MISMATCH;
+            status = static_cast<DecoderStatus::Status>( status | DecoderStatus::PART_MISMATCH );
 
         if( decoding == DecodingOption::STRICT )
             return status;
 
         if( part_size != atoi( getAttribute( "size" ) ) )
-            status |= DecoderStatus::SIZE_MISMATCH;
+            status = static_cast<DecoderStatus::Status>( status | DecoderStatus::SIZE_MISMATCH );
 
         if( decoding == DecodingOption::STRICT )
             return status;
 
         if( part_size != write_stream.str().length() )
-            status |= DecoderStatus::SIZE_MISMATCH;
+            status = static_cast<DecoderStatus::Status>( status | DecoderStatus::SIZE_MISMATCH );
 
         if( decoding == DecodingOption::STRICT )
             return status;
@@ -275,7 +279,7 @@ DecoderStatus::Status YDecoder::parseTrailer( const stringstream &write_stream, 
         if( pcrc != pcrc_val.checksum() ){
             debug.emit( str( format( "pcrc_val : %1$x" ) % pcrc_val.checksum() ) );
             warning.emit( "pcrc mismatch!" );
-            status |= DecoderStatus::PART_CRC_MISMATCH;
+            status = static_cast<DecoderStatus::Status>( status | DecoderStatus::PART_CRC_MISMATCH );
 
             if( decoding == DecodingOption::STRICT )
                 return status;
@@ -284,7 +288,7 @@ DecoderStatus::Status YDecoder::parseTrailer( const stringstream &write_stream, 
     }else{
 
         if( size != atoi( getAttribute( "size" ) ) )
-            status |= DecoderStatus::SIZE_MISMATCH;
+            status = static_cast<DecoderStatus::Status>( status | DecoderStatus::SIZE_MISMATCH );
 
         if( decoding == DecodingOption::STRICT )
             return status;
@@ -297,7 +301,7 @@ DecoderStatus::Status YDecoder::parseTrailer( const stringstream &write_stream, 
     if( crc && crc != crc_val.checksum() ){
         debug.emit( str( format( "crc_val : %1$x" ) % crc_val.checksum() ) );
         warning.emit( "crc mismatch!" );
-        status |= DecoderStatus::CRC_MISMATCH;
+        status = static_cast<DecoderStatus::Status>( status | DecoderStatus::CRC_MISMATCH );
 
         if( decoding == DecodingOption::STRICT )
             return status;
