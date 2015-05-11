@@ -1,0 +1,1 @@
+Library for encoding/decoding (multipart) files according to the yenc 1.2 specifications. Specifically aims to be portable, and facilitates developers of applications using yenc by utilizing the boost and libsigc++ libraries.
